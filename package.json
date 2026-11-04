@@ -1,0 +1,18 @@
+{
+  "name": "sm-hr-portal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "User site + HR Admin portal + HOD portal on Netlify (Functions + Blobs)",
+  "scripts": {
+    "start": "node tools/dev-server.mjs",
+    "dev": "netlify dev",
+    "test": "node tests/e2e.test.mjs",
+    "deploy": "netlify deploy --prod"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.7",
+    "nodemailer": "^10.3.1"
+  }
+}

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>HR Admin Portal | Apex Global</title>
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/portal-kit/portal.css">
+</head>
+<body>
+<div id="demo" class="demo-banner" hidden>Showcase demo mode: email is not configured yet, so the OTP is shown on screen instead of being emailed.</div>
+<div class="auth">
+  <aside class="auth-side">
+    <div class="logo"><span class="logo-mark">AG</span> APEX GLOBAL · HR ADMIN</div>
+    <div>
+      <h1>Recruitment workspace for the HR team</h1>
+      <ul>
+        <li>Publish and manage current openings</li>
+        <li>Review applications and download resumes</li>
+        <li>Track candidates through the hiring pipeline</li>
+        <li>Respond to client and candidate inquiries</li>
+      </ul>
+    </div>
+    <p class="small">Authorised HR staff only. New accounts need HOD approval.</p>
+  </aside>
+
+  <main class="auth-main"><div class="auth-card">
+    <div class="logo"><span class="logo-mark">AG</span> HR Admin Portal</div>
+    <div class="tabs" role="tablist"><button data-tab="login" class="active">Log in</button><button data-tab="signup">Sign up</button></div>
+    <div id="msg" role="status" style="margin-bottom:12px"></div>
+
+    <!-- LOGIN -->
+    <form id="login" class="form view" novalidate>
+      <div><label for="lEmail">Work email</label><input id="lEmail" name="email" type="email" autocomplete="username" required></div>
+      <div><label for="lPw">Password</label><div class="pw-wrap"><input id="lPw" name="password" type="password" autocomplete="current-password" required><button type="button">Show</button></div></div>
+      <button class="btn btn-primary btn-block" type="submit">Log in</button>
+      <p class="small" style="text-align:center;margin:0"><button type="button" class="link" data-go="forgot">Forgot password?</button></p>
+    </form>
+
+    <!-- SIGN UP / FORGOT step 1: email -->
+    <form id="email" class="form view" hidden novalidate>
+      <div class="steps"><span class="on"></span><span></span><span></span></div>
+      <h2 id="emailTitle">Create your account</h2>
+      <p class="muted small" id="emailHint" style="margin-top:-6px">Enter your work email. We'll send a 6-digit code to verify it.</p>
+      <div><label for="sEmail">Work email</label><input id="sEmail" name="email" type="email" autocomplete="email" required></div>
+      <button class="btn btn-primary btn-block" type="submit">Send OTP</button>
+      <p class="small" style="text-align:center;margin:0"><button type="button" class="link" data-go="login">Back to log in</button></p>
+    </form>
+
+    <!-- step 2: OTP -->
+    <form id="otp" class="form view" hidden novalidate>
+      <div class="steps"><span class="on"></span><span class="on"></span><span></span></div>
+      <h2>Enter verification code</h2>
+      <p class="muted small" style="margin-top:-6px">We sent a 6-digit code to <strong id="otpTo"></strong>. It expires in 10 minutes.</p>
+      <div id="demoOtp"></div>
+      <div class="otp" id="otpBoxes"></div>
+      <button class="btn btn-primary btn-block" type="submit">Verify OTP</button>
+      <p class="small" style="display:flex;justify-content:space-between;margin:0">
+        <button type="button" class="link" data-go="email">Change email</button>
+        <button type="button" class="link" id="resend" disabled>Resend code</button></p>
+    </form>
+
+    <!-- step 3: password -->
+    <form id="password" class="form view" hidden novalidate>
+      <div class="steps"><span class="on"></span><span class="on"></span><span class="on"></span></div>
+      <h2 id="pwTitle">Set your password</h2>
+      <p class="alert alert-ok small" style="margin:0">Email verified: <strong id="pwEmail"></strong></p>
+      <div class="signup-only"><label for="pName">Full name</label><input id="pName" name="name" autocomplete="name" required></div>
+      <div class="row signup-only"><div><label for="pEmp">Employee ID <span class="muted">(optional)</span></label><input id="pEmp" name="employeeId"></div>
+        <div><label for="pDes">Designation <span class="muted">(optional)</span></label><input id="pDes" name="designation" placeholder="e.g. HR Executive"></div></div>
+      <div><label for="pPw">Create password</label><div class="pw-wrap"><input id="pPw" name="password" type="password" autocomplete="new-password" required><button type="button">Show</button></div>
+        <ul class="rules" id="rules"></ul></div>
+      <div><label for="pPw2">Confirm password</label><div class="pw-wrap"><input id="pPw2" name="confirm" type="password" autocomplete="new-password" required><button type="button">Show</button></div></div>
+      <button class="btn btn-primary btn-block" type="submit" id="pwBtn">Create account</button>
+    </form>
+
+    <!-- step 4: pending approval -->
+    <div id="pending" class="view" hidden>
+      <div class="card" style="text-align:center">
+        <div style="font-size:2.4rem">⏳</div>
+        <h2>Waiting for HOD approval</h2>
+        <p class="muted">Your account <strong id="pendEmail"></strong> has been created. For security, a Head of Department must approve new HR Admin accounts. You'll be able to log in once it's approved.</p>
+        <button class="btn btn-primary" data-go="login">Go to log in</button>
+      </div>
+    </div>
+  </div></main>
+</div>
+<script src="/portal-kit/portal.js"></script>
+<script src="/admin/auth.js"></script>
+</body>
+</html>

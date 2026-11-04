@@ -1,0 +1,43 @@
+# Netlify configuration – one deploy hosts all three sites:
+#   /        -> User (public) website, 8 pages, no login
+#   /admin/  -> HR Admin portal (OTP sign-up + HOD approval + login)
+#   /hod/    -> HOD portal (internal only)
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+  command = "echo 'No build step: static site + functions'"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin/"
+  status = 301
+[[redirects]]
+  from = "/hod"
+  to = "/hod/"
+  status = 301
+
+# Security headers for every page
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Frame-Options = "DENY"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+# Internal portals: never indexed by search engines, never cached
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+[[headers]]
+  for = "/hod/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"

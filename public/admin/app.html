@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>HR Admin | Apex Global</title>
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/portal-kit/portal.css">
+</head>
+<body>
+<div class="topbar"><button data-menu aria-label="Open menu">☰</button><strong>Apex Global · HR Admin</strong></div>
+<div class="scrim"></div>
+<div class="shell">
+  <aside class="side">
+    <div class="logo"><span class="logo-mark">AG</span> HR ADMIN</div>
+    <nav>
+      <a href="#home" data-r="home">🏠 Home</a>
+      <a href="#applications" data-r="applications">📄 Applications <span class="count" id="cApps" hidden></span></a>
+      <a href="#openings" data-r="openings">💼 Job openings</a>
+      <a href="#enquiries" data-r="enquiries">✉️ Inquiries <span class="count" id="cEnq" hidden></span></a>
+      <a href="#profile" data-r="profile">👤 My profile</a>
+    </nav>
+    <div class="who"><strong id="whoName">…</strong><span id="whoEmail" class="small"></span>
+      <a class="btn btn-sm" href="/" target="_blank" rel="noopener" style="margin-top:10px;width:100%;background:rgba(255,255,255,.08);color:#fff;border-color:transparent">View public site ↗</a>
+      <button class="btn btn-sm" id="logout">Log out</button></div>
+  </aside>
+  <main class="main" id="view"><div class="empty">Loading…</div></main>
+</div>
+<script src="/portal-kit/portal.js"></script>
+<script src="/admin/app.js"></script>
+</body>
+</html>
