@@ -146,3 +146,11 @@ td .sub { color: var(--muted); font-size: .82rem; }
 .timeline li { border-left: 3px solid var(--brand-soft); padding-left: 10px; font-size: .88rem; }
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1b2838; color: #fff; padding: 11px 18px; border-radius: 10px; z-index: 90; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,.2); max-width: calc(100% - 32px); }
 .demo-banner { background: #fff3dc; color: #7a4a00; padding: 8px 14px; font-size: .84rem; text-align: center; font-weight: 600; }
+.b-chat { background: #e6f7f7; color: #007a7a; }
+/* Apex Global Search logo in portals (logo is designed for light backgrounds) */
+.logo-badge-p { background: #fff; border-radius: 12px; padding: 8px 12px; display: inline-flex; align-self: flex-start; }
+.logo-badge-p .portal-logo { height: 54px; width: auto; display: block; }
+.side .logo-badge-p .portal-logo { height: 46px; }
+.side-label { font-size: .72rem; letter-spacing: .18em; font-weight: 700; color: #8fa3c0; margin-top: -8px; padding-left: 4px; }
+.auth-brand { display: flex; align-items: center; gap: 14px; margin-bottom: 26px; font-weight: 800; font-size: 1.05rem; }
+.auth-brand .portal-logo { height: 56px; width: auto; }

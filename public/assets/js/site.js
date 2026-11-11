@@ -10,6 +10,23 @@
     menu.addEventListener("click", (e) => { if (e.target.tagName === "A") menu.classList.remove("open"); });
   }
   document.querySelectorAll("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
+
+  // If a photo cannot load, hide it so the branded background shows instead of a broken image.
+  const hideBroken = (img) => { img.style.visibility = "hidden"; };
+  document.querySelectorAll("img").forEach((img) => {
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute("src")) hideBroken(img);
+    img.addEventListener("error", () => hideBroken(img));
+  });
+
+  // Gentle scroll-reveal animation
+  const items = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && items.length) {
+    document.documentElement.classList.add("js");
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    }), { rootMargin: "0px 0px -8% 0px" });
+    items.forEach((el) => io.observe(el));
+  }
 })();
 
 window.AG = {

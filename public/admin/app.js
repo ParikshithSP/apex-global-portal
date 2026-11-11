@@ -42,7 +42,7 @@
         </div>
       </div>
       <div class="card" style="margin-top:16px"><div class="page-head" style="margin-bottom:8px"><h2 style="margin:0">Latest inquiries</h2><a href="#enquiries">View all →</a></div>
-        ${d.recentEnquiries.length ? d.recentEnquiries.map((e) => `<div style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)"><div><strong>${esc(e.name)}</strong> <span class="sub muted small">${esc(e.company || "")}</span><div class="small muted">${esc(e.category)} · ${date(e.createdAt)}</div></div>${badge(e.status)}</div>`).join("") : `<div class="empty">No inquiries yet.</div>`}</div>`;
+        ${d.recentEnquiries.length ? d.recentEnquiries.map((e) => `<div style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)"><div><strong>${esc(e.name)}</strong> <span class="sub muted small">${esc(e.company || "")}</span><div class="small muted">${esc(e.category)}${e.source === "Chatbot" ? " · 💬 Chatbot" : ""} · ${date(e.createdAt)}</div></div>${badge(e.status)}</div>`).join("") : `<div class="empty">No inquiries yet.</div>`}</div>`;
     V.querySelectorAll("[data-app]").forEach((r) => r.onclick = () => (location.hash = `applications/${r.dataset.app}`));
   }
   function setCount(id, n) { const el = document.getElementById(id); el.hidden = !n; el.textContent = n; }
@@ -184,32 +184,34 @@
     cache.enq = d.enquiries; cache.enqStatuses = d.statuses;
     const cats = [...new Set(d.enquiries.map((e) => e.category))];
     V.innerHTML = `
-      <div class="page-head"><div><h1>Inquiries</h1><p class="muted" style="margin:0">Messages from the Contact Us page.</p></div><button class="btn" id="export">⬇ Export CSV</button></div>
+      <div class="page-head"><div><h1>Inquiries</h1><p class="muted" style="margin:0">Messages from the Contact Us page and the website chat assistant.</p></div><button class="btn" id="export">⬇ Export CSV</button></div>
       <div class="toolbar"><input id="q" type="search" placeholder="Search name, company, message…">
         <select id="fs"><option value="">All statuses</option>${d.statuses.map((s) => `<option>${s}</option>`).join("")}</select>
-        <select id="fc"><option value="">All types</option>${cats.map((c) => `<option>${esc(c)}</option>`).join("")}</select></div>
+        <select id="fc"><option value="">All types</option>${cats.map((c) => `<option>${esc(c)}</option>`).join("")}</select>
+        <select id="fsrc"><option value="">All sources</option><option>Contact form</option><option>Chatbot</option></select></div>
       <div class="card" style="padding:0"><div class="table-wrap" id="tbl"></div></div>`;
-    const q = V.querySelector("#q"), fs = V.querySelector("#fs"), fc = V.querySelector("#fc");
+    const q = V.querySelector("#q"), fs = V.querySelector("#fs"), fc = V.querySelector("#fc"), fsrc = V.querySelector("#fsrc");
     const filtered = () => cache.enq.filter((e) => (!fs.value || e.status === fs.value) && (!fc.value || e.category === fc.value) &&
+      (!fsrc.value || (e.source || "Contact form") === fsrc.value) &&
       (!q.value || [e.name, e.email, e.company, e.subject, e.message].join(" ").toLowerCase().includes(q.value.toLowerCase())));
     const draw = () => {
       const rows = filtered();
       V.querySelector("#tbl").innerHTML = rows.length ? `<table class="responsive"><thead><tr><th>From</th><th>Type</th><th>Message</th><th>Status</th><th>Received</th></tr></thead><tbody>
         ${rows.map((e) => `<tr class="clickable" data-id="${esc(e.id)}"><td data-label="From"><strong>${esc(e.name)}</strong><div class="sub">${esc(e.company || e.email)}</div></td>
-        <td data-label="Type">${esc(e.category)}</td><td data-label="Message">${esc((e.subject ? e.subject + " – " : "") + e.message).slice(0, 90)}…</td>
+        <td data-label="Type">${esc(e.category)}${e.source === "Chatbot" ? ' <span class="badge b-chat">💬 Chatbot</span>' : ""}</td><td data-label="Message">${esc((e.subject ? e.subject + " – " : "") + e.message).slice(0, 90)}…</td>
         <td data-label="Status">${badge(e.status)}</td><td data-label="Received">${date(e.createdAt)}</td></tr>`).join("")}</tbody></table>` : `<div class="empty">No inquiries match.</div>`;
       V.querySelectorAll("tr[data-id]").forEach((r) => r.onclick = () => openEnq(r.dataset.id));
     };
-    [q, fs, fc].forEach((el) => el.oninput = draw); draw();
+    [q, fs, fc, fsrc].forEach((el) => el.oninput = draw); draw();
     V.querySelector("#export").onclick = () => P.csv(`inquiries-${new Date().toISOString().slice(0, 10)}.csv`, [
-      ["Reference", "Type", "Name", "Email", "Phone", "Company", "Job title", "Subject", "Message", "Status", "Received"],
-      ...filtered().map((e) => [e.id.slice(-8).toUpperCase(), e.category, e.name, e.email, e.phone, e.company, e.jobTitle, e.subject, e.message, e.status, e.createdAt])]);
+      ["Reference", "Type", "Source", "Name", "Email", "Phone", "Company", "Job title", "Subject", "Message", "Status", "Received"],
+      ...filtered().map((e) => [e.id.slice(-8).toUpperCase(), e.category, e.source || "Contact form", e.name, e.email, e.phone, e.company, e.jobTitle, e.subject, e.message, e.status, e.createdAt])]);
   }
   function openEnq(id) {
     const e = cache.enq.find((x) => x.id === id);
     const d = P.drawer(`
       <h2 style="padding-right:40px">${esc(e.subject || e.category)}</h2><div>${badge(e.status)} <span class="muted small">Ref ${esc(e.id.slice(-8).toUpperCase())}</span></div>
-      <dl class="kv"><dt>Type</dt><dd>${esc(e.category)}</dd><dt>Name</dt><dd>${esc(e.name)}</dd><dt>Email</dt><dd><a href="mailto:${esc(e.email)}">${esc(e.email)}</a></dd>
+      <dl class="kv"><dt>Type</dt><dd>${esc(e.category)}</dd><dt>Source</dt><dd>${esc(e.source || "Contact form")}</dd><dt>Name</dt><dd>${esc(e.name)}</dd><dt>Email</dt><dd><a href="mailto:${esc(e.email)}">${esc(e.email)}</a></dd>
       <dt>Phone</dt><dd>${esc(e.phone || "—")}</dd><dt>Company</dt><dd>${esc(e.company || "—")}</dd><dt>Job title</dt><dd>${esc(e.jobTitle || "—")}</dd>
       <dt>Received</dt><dd>${date(e.createdAt, true)}</dd><dt>Assigned to</dt><dd>${esc(e.assignedTo || "Unassigned")}</dd></dl>
       <div class="card" style="white-space:pre-wrap;background:#f8fafc">${esc(e.message)}</div>

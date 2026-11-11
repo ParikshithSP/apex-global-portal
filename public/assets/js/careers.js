@@ -13,6 +13,8 @@
     const shown = jobs.filter((j) =>
       (!fD.value || j.domain === fD.value) && (!fT.value || j.type === fT.value) &&
       (!s || [j.title, j.skills, j.location, j.domain].join(" ").toLowerCase().includes(s)));
+    const cnt = document.getElementById("jobCount");
+    if (cnt) cnt.textContent = `${shown.length} opening${shown.length === 1 ? "" : "s"}${q.value || fD.value || fT.value ? " match your search" : ""}`;
     list.innerHTML = shown.length ? shown.map((j) => `
       <article class="card job"><span class="pill">${esc(j.domain)}</span><h3>${esc(j.title)}</h3>${meta(j)}
       ${j.skills ? `<p class="muted" style="margin:0;font-size:.93rem">${esc(j.skills)}</p>` : ""}
@@ -76,8 +78,16 @@
     } finally { btn.disabled = false; btn.textContent = "Submit application"; }
   });
 
+  // Pre-fill filters from the home page job search (?q=...&domain=...)
+  const qs = new URLSearchParams(location.search);
+  if (qs.get("q")) q.value = qs.get("q");
+  if (qs.get("domain")) fD.value = qs.get("domain");
+  if (qs.get("type")) fT.value = qs.get("type");
+  if (qs.has("q") || qs.has("domain")) setTimeout(() => document.getElementById("openings").scrollIntoView(), 50);
+
   AG.api("/api/public/jobs").then((r) => {
     jobs = r.jobs; render();
     const m = location.hash.match(/job=([\w-]+)/); if (m) open(m[1]);
+    window.addEventListener("hashchange", () => { const h = location.hash.match(/job=([\w-]+)/); if (h) open(h[1]); });
   }).catch(() => { list.innerHTML = `<div class="empty" style="grid-column:1/-1">Could not load openings. Please refresh.</div>`; });
 })();

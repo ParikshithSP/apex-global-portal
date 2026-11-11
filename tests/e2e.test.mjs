@@ -44,6 +44,11 @@ await t("contact enquiry", async () => {
     company: "Corp", message: "Need 5 DV engineers", consent: true });
   assert.equal(r.status, 200, JSON.stringify(r.body));
 });
+await t("chatbot lead saved with source", async () => {
+  const r = await call(pub, null, "POST", "/api/public/contact", { name: "Bot Lead", email: "lead@corp.com", category: "Client hiring inquiry",
+    message: "Need 3 embedded engineers in Pune", consent: true, source: "Chatbot" });
+  assert.equal(r.status, 200);
+});
 await t("admin APIs blocked without login", async () => {
   assert.equal((await call(admin, "admin", "GET", "/api/admin/applications")).status, 401);
 });
@@ -122,6 +127,8 @@ await t("admin job CRUD reflects on public site", async () => {
 });
 await t("enquiry status update", async () => {
   const e = await call(admin, "admin", "GET", "/api/admin/enquiries");
+  assert.ok(e.body.enquiries.some((x) => x.source === "Chatbot"));
+  assert.ok(e.body.enquiries.some((x) => x.source === "Contact form"));
   const r = await call(admin, "admin", "PATCH", `/api/admin/enquiries/${e.body.enquiries[0].id}`, { status: "In Progress", assignToMe: true });
   assert.equal(r.body.enquiry.status, "In Progress");
 });

@@ -82,6 +82,7 @@ export default async (req, context) => {
         category: CATEGORIES.includes(b.category) ? b.category : "General business inquiry",
         company: clean(b.company, 150), jobTitle: clean(b.jobTitle, 100),
         subject: clean(b.subject, 150), message: clean(b.message, 3000),
+        source: b.source === "Chatbot" ? "Chatbot" : "Contact form",
       };
       const errors = {};
       if (e.name.length < 2) errors.name = "Enter your name.";
